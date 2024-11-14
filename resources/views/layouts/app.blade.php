@@ -10,10 +10,38 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.2.0/ckeditor5.css" />
 
         <!-- Scripts -->
+        @push('scripts')
+            <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@0.2.28/bundled/lenis.js"></script>
+
+            <script>
+                const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                smoothTouch: false,
+                touchMultiplier: 2,
+                infinite: false,
+                })
+
+
+                function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+                }
+
+                requestAnimationFrame(raf);
+            </script>
+        @endpush
+
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
+        @stack('styles')
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -33,6 +61,7 @@
                 {{ $slot }}
             </main>
         </div>
+        @livewireScripts
         @stack('scripts')
     </body>
 </html>

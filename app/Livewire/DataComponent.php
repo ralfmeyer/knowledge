@@ -4,26 +4,27 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Data;
+use App\Models\File;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
-
+use League\CommonMark\CommonMarkConverter;
 
 
 class DataComponent extends Component
 {
 
-
-
     public $dataList;
 
-    public $filterBereich = '';
+    public $filterBereich = [];
     public $filterUeberschrift = '';
     public $filterInhalt = '';
     public $filterSchlagworte = '';
 
     public $sql = '';
     public $auswahlBereich = [];
+    public $showForm = false;
 
     protected $rules = [
         'bereich' => 'required|max:80',
@@ -33,14 +34,38 @@ class DataComponent extends Component
     ];
 
     public function mount(){
-        $this->auswahlBereich = Data::distinct()->pluck('bereich');
+
+        if (session()->has('filterBereich')) {
+            $this->filterBereich = session('filterBereich');
+        }
+
+        $query = Data::query();
+        $userId = Auth::id();
+
+        $query = $query->where(function($query) use ($userId) {
+            // Bedingung für "berechtigung"
+            $query->where('berechtigung', 0)
+                ->orWhere(function($query) use ($userId) {
+                    $query->where('berechtigung', 1)
+                            ->where('userid', $userId);
+                });
+        })->with('files');
+
+
+
+        $this->auswahlBereich = $query->distinct()->orderBy('bereich')->pluck('bereich');
+
     }
 
     public function render()
     {
         $this->dataList = $this->Abfrage();
-        //$this->dataList = Data::all();
+
         return view('livewire.data-component');
+    }
+
+    public function updatedFilterbereich(){
+        session()->put('filterBereich', $this->filterBereich);
     }
 
 
@@ -53,8 +78,8 @@ class DataComponent extends Component
 
         $query = Data::query();
 
-        if ($this->filterBereich != ''){
-            $query = $query->where('bereich', $this->filterBereich);
+        if (count($this->filterBereich) != 0){
+            $query = $query->whereIn('bereich', $this->filterBereich);
         }
 
         if (count($splitUeberschrift) > 0){
@@ -92,12 +117,24 @@ class DataComponent extends Component
                             ->where('userid', $userId);
                 });
         });
-        $this->sql = $query->toRawSql();
-        return $query->get();
+        // $this->sql = $query->toRawSql();
+        $result = $query->get();
+        $converter = new CommonMarkConverter();
+
+        foreach ($result as $key => $item){
+
+            // $result[$key]['inhaltHtml'] = $converter->convert($item->inhalt)->getContent();
+            $item->inhaltHtml = $converter->convert($item->inhalt)->getContent();
+
+        }
+        //dd($result);
+        return $result;
+        //return $query->get();
     }
 
     public function delete($id)
     {
+        File::where('data_id', $id)->delete();
         Data::find($id)->delete();
         session()->flash('message', 'Data deleted successfully.');
     }

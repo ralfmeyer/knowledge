@@ -21,12 +21,13 @@ class Data extends Model
         'userid'
     ];
 
-
-
-
-
     public function getCreatedatAttribute($value)
     {
         return \Carbon\Carbon::parse($value)->format('d.m.Y H:i');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\CreateDataComponent;
+use App\Livewire\TestComponent;
+use App\Livewire\HtmlEditorComponent;
+use App\Livewire\ResizeableBox;
 
 //Route::view('/', '');
 
@@ -12,14 +16,24 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::view('create', 'createdata')
+    Route::get('scrollbox', ResizeableBox::class)
+    ->middleware(['auth'])
+    ->name('scrollbox');
+
+Route::get('create', CreateDataComponent::class)
+    ->middleware(['auth'])
+    ->name('create');
+
+Route::get('xxx', TestComponent::class)
 ->middleware(['auth'])
-->name('create');
+->name('xxx');
 
-Route::get('edit/{id}', function ($id) {
-    // Hier kannst du Logik hinzufügen, z.B. die Datenbank abfragen
-    return view('createdata', ['id' => $id]);
-})->middleware(['auth'])->name('edit');
+Route::get('edit/{pid}', CreateDataComponent::class)
+    ->middleware(['auth'])
+    ->name('edit');
 
+Route::get('ckedit/{pid}', HtmlEditorComponent::class)
+->middleware(['auth'])
+->name('ckedit');
 
 require __DIR__.'/auth.php';
