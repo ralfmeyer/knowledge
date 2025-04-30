@@ -73,21 +73,7 @@
                                                         <div class="w-1/12">Anhänge:</div>
                                                         <div class="flex flex-col w-11/12">
                                                             @foreach ($item->files as $file)
-                                                                <div class="px-1">
-                                                                    <div class="text-blue-500 border-b border-b-gray-400">
-                                                                        @if ($file->art === 0)
-                                                                            <a href="{{ asset('storage/uploads/' . $file->file_path) }}" title="{{ $file->file_path }}" target="_blank">
-                                                                                <x-fluentui-arrow-download-16-o class="h-6 float-start" />
-                                                                                {{ $file->file_path }}
-                                                                            </a>
-                                                                        @elseif ($file->art === 1)
-                                                                            <a href="{{ $file->file_path }}" title="{{ $file->file_path }}" target="_blank">
-                                                                                <x-fluentui-link-16-o class="h-6 float-start" />
-                                                                                {{ $file->file_path }}
-                                                                            </a>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
+                                                                <x-anhanglink :file="$file" :short="false"/>
                                                             @endforeach
                                                         </div>
                                                     </div>
@@ -97,21 +83,9 @@
                                             <div class="flex flex-row items-center justify-between">
                                                 <div class="flex-1 text-xs items-center">
                                                     <div class="float-start">[ {{ $item->schlagworte }} ]</div>
-                                                    <div x-show="!expanded">
+                                                    <div x-show="!expanded" class="flex flex-row">
                                                         @foreach ($item->files as $file)
-                                                            <div class="float-start px-1">
-                                                                <div class="text-blue-500">
-                                                                    @if ($file->art === 0)
-                                                                        <a href="{{ asset('storage/uploads/' . $file->file_path) }}" title="{{ $file->file_path }}" target="_blank">
-                                                                            <x-fluentui-arrow-download-16-o class="h-5" />
-                                                                        </a>
-                                                                    @elseif ($file->art === 1)
-                                                                        <a href="{{ $file->file_path }}" title="{{ $file->file_path }}" target="_blank">
-                                                                            <x-fluentui-link-16-o class="h-5" />
-                                                                        </a>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
+                                                            <x-anhanglink :file="$file" :short="true"/>
                                                         @endforeach
                                                     </div>
                                                 </div>

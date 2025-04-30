@@ -192,6 +192,8 @@
                                                     <x-fluentui-arrow-download-16-o class="h-6" />
                                                 @elseif ($file->art === 1)
                                                    <x-fluentui-link-16-o class="h-6 " />
+                                                @elseif ($file->art === 2)
+                                                    <x-fluentui-image-16-o class="h-6" />
                                                 @endif
                                             </div>
 
@@ -200,6 +202,9 @@
                                             @elseif ($file->art === 1)
 
                                                 <a href="{{ $file->file_path }}" target="_blank">{{ $file->file_path }}</a>
+                                            @elseif ($file->art === 2)
+
+                                                <a href="{{ asset('storage/uploads/' . $file->file_path) }}" data-lightbox="galerie" data-title="{{ $file->file_path }}">{{ $file->file_path }}</a>
                                             @endif
 
                                         </div>
@@ -234,7 +239,7 @@
 
 
                                     <div class="mb-4">
-                                        {!! $inhalt !!}
+                                        {!! $inhaltMdeHtml !!}
                                     </div>
                                 </div>
 
@@ -245,6 +250,7 @@
 
                     <div class="flex flex-col mt-6">
                         <div>
+                            <a href="https://www.markdownguide.org/basic-syntax/" target="_blank"> Demo Markdown grundlegende Syntax </a>
                             <label class="font-bold">
                                 Mustertext :
                             </label>

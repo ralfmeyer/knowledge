@@ -20,6 +20,8 @@
         "@ckeditor/ckeditor5-essentials": "^43.2.0",
         "@ckeditor/ckeditor5-image": "^43.2.0",
         "codemirror": "^6.0.1",
+        "jquery": "^3.7.1",
+        "lightbox2": "^2.11.5",
         "simplemde": "^1.11.2",
         "trix": "^2.1.8"
     }

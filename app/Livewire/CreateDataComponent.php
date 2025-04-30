@@ -9,6 +9,7 @@ use App\Models\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithFileUploads;
+use League\CommonMark\CommonMarkConverter;
 
 class CreateDataComponent extends Component
 {
@@ -24,6 +25,8 @@ class CreateDataComponent extends Component
     public $files = [];
     public $link;
     public $data;
+
+    public $inhaltMdeHtml;
 
     protected $rules = [
         'bereich' => 'required|max:80',
@@ -139,10 +142,11 @@ class CreateDataComponent extends Component
         // Log::info('Updated', [$field]);
     }
 
-    public function updateInhalt($content)
+    public function updatedInhalt($content)
     {
         // Log::info('updateInhalt aktualisiert in Komponente:', [$content, $this->inhalt]);
         // $this->inhalt = $content; // Inhalt in der Komponente speichern
+        $this->updateHtml();
     }
 
     private function isInArray($array, $fn)
@@ -169,7 +173,6 @@ class CreateDataComponent extends Component
             'inputfiles.*' => 'mimes:jpg,png,pdf,gif|max:2048',
         ]);
 
-
         $zugefuegt = 0;
         foreach ($value as $file) {
             $originalFileName = $file->getClientOriginalName();
@@ -179,18 +182,28 @@ class CreateDataComponent extends Component
             $zugefuegt += $this->_addFile( $originalFileName);
 
         }
-
-
-
-
         // session()->flash('anzmessage', sprintf('Anzahl hinzugefügt: %d', [$zugefuegt]));
     }
 
     private function _addLink($name){
         return $this->_addAnhang($name, 1);
     }
+
+
+    function checkImage($filename) {
+        // Array mit erlaubten Bilderweiterungen
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
+
+        // Dateiendung extrahieren und in Kleinbuchstaben umwandeln
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+        // Prüfen ob die Erweiterung in den erlaubten Erweiterungen ist
+        return in_array($extension, $allowedExtensions) ? 2 : 1;
+     }
+
     private function _addFile($name){
-        return $this->_addAnhang($name, 0);
+        $art = $this->checkImage($name);
+        return $this->_addAnhang($name, $art);
     }
 
     private function _addAnhang($name, $art){
@@ -244,8 +257,6 @@ class CreateDataComponent extends Component
         $this->link = '';
 
         $this->inputfiles = '';
-
-
     }
 
     public function store()
@@ -307,5 +318,16 @@ class CreateDataComponent extends Component
         }
 
         $this->loadFiles();
+    }
+
+
+    public function updateHtml()
+    {
+        Log::info('updateHtml:');
+        // $this->inhalt = $value;
+
+        $converter = new CommonMarkConverter();
+        //dd($converter->convert($this->inhaltMde)->getContent());
+        $this->inhaltMdeHtml = $converter->convert($this->inhalt)->getContent();
     }
 }
