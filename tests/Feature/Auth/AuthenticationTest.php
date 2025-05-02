@@ -17,9 +17,9 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeIs('pages.auth.login');
+            ->assertSeeVolt('pages.auth.login');
     }
-/*
+
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
         $user = User::factory()->create();
@@ -32,7 +32,7 @@ class AuthenticationTest extends TestCase
 
         $component
             ->assertHasNoErrors()
-            ->assertRedirect(route('home', absolute: false));
+            ->assertRedirect(route('dashboard', absolute: false));
 
         $this->assertAuthenticated();
     }
@@ -60,11 +60,11 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->get('/');
+        $response = $this->get('/dashboard');
 
         $response
             ->assertOk()
-            ->assertSee('layout.navigation');
+            ->assertSeeVolt('layout.navigation');
     }
 
     public function test_users_can_logout(): void
@@ -83,5 +83,4 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
-*/
 }
